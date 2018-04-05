@@ -9,7 +9,7 @@ const authenticate = require('./middleware/authenticate');
 require('dotenv').config();
 
 const corsOptions = {
-  // origin: 'http://10.0.1.113:3000/',
+  origin: 'http://localhost:3000/',
   credentials: true,
   methods: ['GET', 'PUT', 'POST', 'DELETE']
 };
