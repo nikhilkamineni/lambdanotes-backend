@@ -156,7 +156,7 @@ server.get('/users/name/:username', authenticate, (req, res) => {
     });
 });
 
-// Login user and send back JWT
+// Login user
 server.post('/login', (req, res) => {
   let { username, password } = req.body;
   username = username.toLowerCase();
@@ -176,7 +176,6 @@ server.post('/login', (req, res) => {
     }
     // Use the method on the User model to hash and check PW
     user.checkPassword(password, (nonMatch, hashMatch) => {
-      // console.log(nonMatch, password);
       if (nonMatch !== null) {
         res.status(422).json({ error: 'Incorrect password' });
         return;

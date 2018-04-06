@@ -40,4 +40,5 @@ UserSchema.methods.checkPassword = function(potentialPassword, cb) {
     cb(null, isMatch);
   });
 };
+
 module.exports = mongoose.model('User', UserSchema);
