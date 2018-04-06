@@ -19,12 +19,14 @@ server.use(cors(corsOptions));
 server.use(express.json());
 
 // NOTES ENDPOINTS //
+// Get all notes
 server.get('/notes', authenticate, (req, res) => {
   Note.find({}, (err, notes) => {
     if (err) res.status(500).json('Failed to get notes: ', err);
     res.status(200).json(notes);
   });
 });
+
 // Save new note
 server.post('/notes', authenticate, (req, res) => {
   const { title, content, createdBy } = req.body;
@@ -67,6 +69,7 @@ server.get('/notes/:id', authenticate, (req, res) => {
       res.status(500).json({ message: 'Cannot find note', error: err });
     });
 });
+
 // Update Note by ID
 server.put('/notes/:id', authenticate, (req, res) => {
   const id = req.params.id;
@@ -82,6 +85,7 @@ server.put('/notes/:id', authenticate, (req, res) => {
       res.status(500).json({ message: 'Error finding note', error: err })
     );
 });
+
 // Delete note
 server.delete('/notes/:id', authenticate, (req, res) => {
   const id = req.params.id;
@@ -99,34 +103,35 @@ server.delete('/notes/:id', authenticate, (req, res) => {
 
 // USER ENDPOINTS //
 // Create new User
-server
-  .route('/users')
-  // Create new User
-  .post((req, res) => {
-    let { username, password } = req.body;
-    username = username.toLowerCase();
-    if (!username || !password) {
-      res
-        .status(422)
-        .json({ message: 'You need to provide a username and password!' });
-      return;
-    }
-    const newUser = new User({ username, password });
-    newUser
-      .save()
-      .then(savedUser =>
-        res.status(200).json({ message: 'Successfully created!', savedUser })
-      );
-  })
-  // Get all Users
-  .get((req, res) => {
-    User.find({})
-      .populate('notes')
-      .then(users => res.status(200).json(users))
-      .catch(err =>
-        res.status(500).json({ message: 'Error getting users', error: err })
-      );
-  });
+server.post('/users', (req, res) => {
+  let { username, password } = req.body;
+  username = username.toLowerCase();
+  if (!username || !password) {
+    res
+      .status(422)
+      .json({ message: 'You need to provide a username and password!' });
+    return;
+  }
+  const newUser = new User({ username, password });
+  newUser
+    .save()
+    .then(savedUser =>
+      res.status(200).json({ message: 'Successfully created!', savedUser })
+    )
+    .catch(err =>
+      res.status(500).json({ message: 'Error creating user', error: err })
+    );
+});
+
+// Get all Users
+server.get('/equifax', (req, res) => {
+  User.find({})
+    .populate('notes')
+    .then(users => res.status(200).json(users))
+    .catch(err =>
+      res.status(500).json({ message: 'Error getting users', error: err })
+    );
+});
 
 // Get user by id
 server.get('/users/:id', authenticate, (req, res) => {
